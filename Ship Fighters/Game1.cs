@@ -1494,7 +1494,9 @@ namespace Ship_Fighters
                             break;
                         case "Nathan":
                             spriteBatch.DrawString(titlefont, "NATHAN SIMULATOR ACTIVE!!!!", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - titlefont.MeasureString("NATHAN SIMULATOR ACTIVE!!!!").X / 2, GraphicsDevice.Viewport.TitleSafeArea.Height / 2 + 256), GetRandomColor());
-                            spriteBatch.DrawString(font, "(C) Sean Norris 2016, Graphics (C) Nathan Mchallam 2015", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width - font.MeasureString("(C) Sean Norris 2016, Graphics (C) Nathan Mchallam 2015").X - 16, GraphicsDevice.Viewport.TitleSafeArea.Height - font.MeasureString("(C) Sean Norris 2016, Graphics (C) Nathan Mchallam 2015").Y / 2 - 16), Color.Red);
+                            spriteBatch.DrawString(font, "(C) Sean Norris 2016", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width - font.MeasureString("(C) Sean Norris 2016").X - 16, GraphicsDevice.Viewport.TitleSafeArea.Height - font.MeasureString("(C) Sean Norris 2016").Y / 2 - 16), Color.Red);
+                            spriteBatch.DrawString(font, "Graphics (C) Nathan Mchallam 2015", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width - font.MeasureString("Graphics (C) Nathan Mchallam 2015").X - 16, GraphicsDevice.Viewport.TitleSafeArea.Height - font.MeasureString("Graphics (C) Nathan Mchallam 2015").Y / 2 - font.MeasureString("(C) Sean Norris 2016").Y - 8), Color.Red);
+
                             break;
                     }
                     /*
