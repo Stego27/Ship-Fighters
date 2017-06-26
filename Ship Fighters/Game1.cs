@@ -71,6 +71,7 @@ namespace Ship_Fighters
         private float remainingDelay = delay;
         // A movement speed for the player
         bool escaping;
+        bool mute;
         bool FiringRedBullet = false;
         bool FiringBlueBullet = false;
         float playerMoveSpeed;
@@ -78,6 +79,13 @@ namespace Ship_Fighters
         int BlueWins = 0;
         string Screen = "title";
         string gamemode = "singleplayer";
+        bool HoldingF8 = false;
+        bool HoldingF1 = false;
+        bool HoldingF2 = false;
+        
+        
+        Color Colour;
+        string Mode = "Normal";
         Dictionary<string, int> AIInfo = new Dictionary<string, int>();
         Random Random = new Random();
         enum BState
@@ -272,6 +280,7 @@ namespace Ship_Fighters
                 }
             
         }
+
         protected override void Initialize()
         {
 
@@ -286,34 +295,7 @@ namespace Ship_Fighters
                 System.IO.File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Stego27\\username.txt", Environment.UserName);
                 PlayerName = System.IO.File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Stego27\\username.txt");
             }
-            /*if (PlayerName != Properties.Settings.Default.UserName)
-            {
-                client = PlayerIO.Connect(
 
-                                "ship-fighters2-qtzrs3ccj0wdo07oa9bttg",  // Game id (Get your own at gamesnet.yahoo.com. 1: Create user, 2:Goto control panel, 3:Create game, 4: Copy game id inside the "")
-                                "public",                       // The id of the connection, as given in the settings section of the control panel. By default, a connection with id='public' is created on all games.
-                                Properties.Settings.Default.UserName,                      // The id of the user connecting. This can be any string you like. For instance, it might be "fb10239" if you´re building a Facebook app and the user connecting has id 10239
-                                null,
-                                null
-                            );
-                if (Properties.Settings.Default.UserID < 0)
-                {
-                    client.BigDB.Load("UserNames", Properties.Settings.Default.UserName, delegate (DatabaseObject UserNames) {
-                        while (UserNames.Contains("Player"))
-
-                            UserNames.Save();
-                    });
-                    
-                }
-                
-                client.BigDB.Load("UserNames", Properties.Settings.Default.UserName, delegate(DatabaseObject UserNames){
-                    
-                    UserNames.Save();
-                });
-                client.Logout();
-            }
-            */
-            
             AIInfo.Add("Direction", 0);
             AIInfo.Add("TraveledDistance", 0);
             AIInfo.Add("TimeSinceLastShot", 0);
@@ -402,19 +384,36 @@ namespace Ship_Fighters
         }
 
         /// <summary>
-        
+        public void shootsound()
+        {
+            if (!mute)
+            {
+                switch (Mode)
+                {
+                    case "Normal":
+                        Shoot.Play();
+                        break;
+                    case "MLG":
+                        MLGShot.Play();
+                        break;
+                    case "Nathan":
+                        PoorWeeCrowBoy.Play();
+                        break;
+                }
+            }
+        }
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (!songstart)
-            {
-                MediaPlayer.Play(Background);
-                songstart = true;
-            }
-
+            
+                if (!songstart)
+                {
+                    MediaPlayer.Play(Background);
+                    songstart = true;
+                }
 
             // TODO: Add your update logic here
 
@@ -440,6 +439,43 @@ namespace Ship_Fighters
         private void UpdatePlayer(GameTime gameTime)
             
         {
+
+            if (Keyboard.GetState().IsKeyDown(Keys.F1))
+            {
+                if (HoldingF1 == false)
+                {
+                    HoldingF1 = true;
+                    if (MediaPlayer.IsMuted)
+                    {
+                        MediaPlayer.IsMuted = false;
+                    }
+                    else
+                    {
+                        MediaPlayer.IsMuted = true;
+                    }
+
+                }
+            }
+            else { HoldingF1 = false; }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.F2))
+            {
+                if (HoldingF2 == false)
+                {
+                    HoldingF2 = true;
+                    if (mute)
+                    {
+                        mute = false;
+                    }
+                    else
+                    {
+                        mute = true;
+                    }
+
+                }
+            }
+            else { HoldingF2 = false; }
+
             if (IsChangingGraphics == true) { IsChangingGraphics = false; graphics.ApplyChanges(); RedShip.Position = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X + GraphicsDevice.Viewport.TitleSafeArea.Width, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height - 64); BlueShip.Position = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y);}
             if (connection != null) {
                 if (connection.Connected == true)
@@ -464,8 +500,8 @@ namespace Ship_Fighters
                                     {
                                         Refresh = false;
                                         status = "Starting Game";
-                                        graphics.PreferredBackBufferWidth = 1280;
-                                        graphics.PreferredBackBufferHeight = 720;
+                                        graphics.PreferredBackBufferWidth = 1920;
+                                        graphics.PreferredBackBufferHeight = 1080;
                                         IsChangingGraphics = true;
                                         RedShip.Active = true;
                                         BlueShip.Active = true;
@@ -480,8 +516,8 @@ namespace Ship_Fighters
                                         if (Screen == "lobby")
                                         {
                                             status = "Starting Game";
-                                            graphics.PreferredBackBufferWidth = 1280;
-                                            graphics.PreferredBackBufferHeight = 720;
+                                            graphics.PreferredBackBufferWidth = 1920;
+                                            graphics.PreferredBackBufferHeight = 1080;
                                             IsChangingGraphics = true;
                                             RedShip.Active = true;
                                             BlueShip.Active = true;
@@ -590,7 +626,6 @@ namespace Ship_Fighters
                     RedShip.Position = new Vector2(RedShip.Position.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height - 64);
                     BlueShip.Position = new Vector2(BlueShip.Position.X, GraphicsDevice.Viewport.TitleSafeArea.Y);
                     IsMouseVisible = false;
-                    
 
                     switch (gamemode)
                     {
@@ -789,10 +824,6 @@ namespace Ship_Fighters
                             break;
                     }
                     
-
-
-
-
                     // Make sure that the player does not go out of bounds
 
                     BlueShip.Position.X = MathHelper.Clamp(BlueShip.Position.X, 0, GraphicsDevice.Viewport.Width - BlueShip.Width);
@@ -1040,7 +1071,8 @@ namespace Ship_Fighters
                         }
                     }
                     else { HoldingF8 = false; }
-                        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+
+                    if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                     {
                         if (escaping == false)
                         {
@@ -1048,6 +1080,7 @@ namespace Ship_Fighters
                         }
                     }
                     else { escaping = false; }
+
                     break;
                 case "lobby":
                     
@@ -1056,14 +1089,12 @@ namespace Ship_Fighters
                         connecting = true;
 
                         client = PlayerIO.Connect(
-
                                 "ship-fighters2-qtzrs3ccj0wdo07oa9bttg",  // Game id (Get your own at gamesnet.yahoo.com. 1: Create user, 2:Goto control panel, 3:Create game, 4: Copy game id inside the "")
                                 "public",                       // The id of the connection, as given in the settings section of the control panel. By default, a connection with id='public' is created on all games.
                                 PlayerName,                      // The id of the user connecting. This can be any string you like. For instance, it might be "fb10239" if you´re building a Facebook app and the user connecting has id 10239
                                 null,
                                 null
                             );
-                            
                         status = "Finding Game";
                         connectionnumber = 0;
                         //client.Multiplayer.DevelopmentServer = new PlayerIOClient.ServerEndpoint("192.168.1.71", 25565);
@@ -1301,29 +1332,13 @@ namespace Ship_Fighters
 
                   
         }
-        bool HoldingF8 = false;
+
         private Color GetRandomColor()
         {
-            
+
             return new Color(Random.Next(0, 255), Random.Next(0, 255), Random.Next(0, 255));
         }
-        public void shootsound()
-        {
-            switch (Mode)
-            {
-                case "Normal":
-                    Shoot.Play();
-                    break;
-                case "MLG":
-                    MLGShot.Play();
-                    break;
-                case "Nathan":
-                    PoorWeeCrowBoy.Play();
-                    break;
-            }
-        }
-        Color Colour;
-        string Mode = "Normal";
+
         protected override void Draw(GameTime gameTime)
         {
             
@@ -1364,7 +1379,6 @@ namespace Ship_Fighters
                     GraphicsDevice.Clear(Color.CornflowerBlue);
                     break;
             }
-            
             spriteBatch.Begin();
             switch (Screen)
             {
@@ -1483,6 +1497,7 @@ namespace Ship_Fighters
                     for (int i = 0; i < NUMBER_OF_BUTTONS; i++)
                         spriteBatch.Draw(button_texture[i], button_rectangle[i], button_color[i]);
                     Title.Draw(spriteBatch);
+                    spriteBatch.DrawString(font, "Press F1 to mute music and F2 to mute sound effects.", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width - font.MeasureString("Press F1 to mute music and F2 to mute sound effects.").X, 0), Color.Red);
                     switch (Mode)
                     {
                         case "Normal":
@@ -1499,17 +1514,6 @@ namespace Ship_Fighters
 
                             break;
                     }
-                    /*
-                    if (Mode == "MLG")
-                    {
-                        spriteBatch.DrawString(titlefont, "MLG MODE ACTIVE!!!!", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - titlefont.MeasureString("MLG MODE ACTIVE!!!!").X / 2, GraphicsDevice.Viewport.TitleSafeArea.Height /2 + 256), GetRandomColor());
-                    }
-                    if (Mode == "Nathan")
-                    {
-                        spriteBatch.DrawString(titlefont, "NATHAN SIMULATOR ACTIVE!!!!", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - titlefont.MeasureString("NATHAN SIMULATOR ACTIVE!!!!").X / 2, GraphicsDevice.Viewport.TitleSafeArea.Height / 2 + 256), GetRandomColor());
-                    }
-                    spriteBatch.DrawString(font, "(C) Sean Norris 2016", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width - font.MeasureString("(C) Sean Norris 2016").X - 16, GraphicsDevice.Viewport.TitleSafeArea.Height - font.MeasureString("(C) Sean Norris 2016").Y / 2 - 16), Color.Red);
-                    */
                     break;
                 case "lobby":
                     spriteBatch.DrawString(titlefont, status, new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width / 2 - titlefont.MeasureString(status).X / 2, GraphicsDevice.Viewport.TitleSafeArea.Height / 2 - titlefont.MeasureString(status).Y), Color.Red);
@@ -1539,6 +1543,7 @@ namespace Ship_Fighters
             RedBullet.Initialize(RedBulletTexture, RedBulletPos);
             RedBullets.Add(RedBullet);
         }
+
         private void BlueBulletSpawn()
         {
             BlueBullet BlueBullet = new BlueBullet();
@@ -1546,6 +1551,7 @@ namespace Ship_Fighters
             BlueBullet.Initialize(BlueBulletTexture, BlueBulletPos);
             BlueBullets.Add(BlueBullet);
         }
+
         bool hit_image_alpha(Rectangle rect, Texture2D tex, int x, int y)
         {
             return hit_image_alpha(0, 0, tex, tex.Width * (x - rect.X) /
@@ -1631,9 +1637,8 @@ namespace Ship_Fighters
             }
         }
 
-        
             // Logic for each button click goes here
-            void take_action_on_button(int i)
+        void take_action_on_button(int i)
         {
             //take action corresponding to which button was clicked
             switch (i)
