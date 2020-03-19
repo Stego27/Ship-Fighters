@@ -140,9 +140,10 @@ namespace Ship_Fighters
                 //BulletCollisionRectangle = new Rectangle((int)BlueShip.Position.X, (int)BlueShip.Position.Y + BlueShip.Height, (int)BlueShip.Position.X + BlueShip.Width, (int)BlueShip.Position.Y + BlueShip.Height + 10);
                 RedAICollisionRectangle = new Rectangle((int)RedShip.Position.X,  1, (int)RedShip.Position.X + RedShip.Width, 1);
                 BlueAICollisionRectangle = new Rectangle((int)BlueShip.Position.X + 16,  1, (int)BlueShip.Position.X + BlueShip.Width - 16, 1);
+                /*
                 for (int i = 0; i < RedBullets.Count; i++)
                 {
-                    /*
+                    
                     if (BulletCollisionRectangle.Intersects(new Rectangle((int)RedBullets[i].Position.X, (int)RedBullets[i].Position.Y, (int)RedBullets[i].Position.X + RedBullets[i].Width, (int)RedBullets[i].Position.Y - RedBullets[i].Height)))
                     {
                         if (BlueShip.Position.X + BlueShip.Width/2 > RedBullets[i].Position.X + RedBullets[i].Width / 2)
@@ -158,8 +159,8 @@ namespace Ship_Fighters
                             AIInfo["TravelDistance"] = 0;
                         }
                     }
-                    */
-                }
+                    
+                }*/
                 if (RedAICollisionRectangle.Intersects(BlueAICollisionRectangle))
                 {
                     AIInfo["RedRelative"] = 0;
