@@ -1522,7 +1522,8 @@ namespace Ship_Fighters
                     for (int i = 0; i < NUMBER_OF_BUTTONS; i++)
                         spriteBatch.Draw(button_texture[i], button_rectangle[i], button_color[i]);
                     Title.Draw(spriteBatch);
-                    spriteBatch.DrawString(font, "Press F1 to mute music and F2 to mute sound effects.", new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width - font.MeasureString("Press F1 to mute music and F2 to mute sound effects.").X, 0), Color.Red);
+                    var muteString = $"Press F1 to {(Mute ? "un" : "")}mute music and F2 to {(mute ? "un" : "")}mute sound effects.";
+                    spriteBatch.DrawString(font, muteString, new Vector2(GraphicsDevice.Viewport.TitleSafeArea.Width - font.MeasureString(muteString).X, 0), Color.Red);
                     switch (Mode)
                     {
                         case "Normal":
