@@ -7,6 +7,8 @@ using PlayerArea;
 using PlayerIOClient;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+
 namespace Ship_Fighters
 {
 
@@ -46,6 +48,7 @@ namespace Ship_Fighters
         SoundEffect PoorWeeCrowBoy;
         SoundEffect MLGShot;
         Song Background;
+        Song Nathan;
         bool songstart = false;
         Vector2 RedBulletPos;
         Vector2 BlueBulletPos;
@@ -140,9 +143,10 @@ namespace Ship_Fighters
                 //BulletCollisionRectangle = new Rectangle((int)BlueShip.Position.X, (int)BlueShip.Position.Y + BlueShip.Height, (int)BlueShip.Position.X + BlueShip.Width, (int)BlueShip.Position.Y + BlueShip.Height + 10);
                 RedAICollisionRectangle = new Rectangle((int)RedShip.Position.X,  1, (int)RedShip.Position.X + RedShip.Width, 1);
                 BlueAICollisionRectangle = new Rectangle((int)BlueShip.Position.X + 16,  1, (int)BlueShip.Position.X + BlueShip.Width - 16, 1);
+                /*
                 for (int i = 0; i < RedBullets.Count; i++)
                 {
-                    /*
+                    
                     if (BulletCollisionRectangle.Intersects(new Rectangle((int)RedBullets[i].Position.X, (int)RedBullets[i].Position.Y, (int)RedBullets[i].Position.X + RedBullets[i].Width, (int)RedBullets[i].Position.Y - RedBullets[i].Height)))
                     {
                         if (BlueShip.Position.X + BlueShip.Width/2 > RedBullets[i].Position.X + RedBullets[i].Width / 2)
@@ -158,8 +162,8 @@ namespace Ship_Fighters
                             AIInfo["TravelDistance"] = 0;
                         }
                     }
-                    */
-                }
+                    
+                }*/
                 if (RedAICollisionRectangle.Intersects(BlueAICollisionRectangle))
                 {
                     AIInfo["RedRelative"] = 0;
@@ -371,6 +375,8 @@ namespace Ship_Fighters
             BlueIlluminati.Initialize(Content.Load<Texture2D>("Graphics\\illuminati"), new Vector2(BlueShip.Position.X, BlueShip.Position.Y));
             Sanic.Initialize(Content.Load<Texture2D>("Graphics\\sanic"), new Vector2(0, GraphicsDevice.Viewport.TitleSafeArea.Height / 2 - 256 / 2));
             Background = Content.Load<Song>("Sounds\\Background");
+            Nathan = Content.Load<Song>("Sounds\\Nathan");
+            //Nathan = Song.FromUri("Nathan", new Uri("Content\\Sounds\\Nathan.mp3", UriKind.Relative));
             MediaPlayer.IsRepeating = true;
         }
 
@@ -435,7 +441,9 @@ namespace Ship_Fighters
             UpdatePlayer(gameTime);
             base.Update(gameTime);
         }
-        
+
+        private bool Mute;
+
         private void UpdatePlayer(GameTime gameTime)
             
         {
@@ -445,14 +453,11 @@ namespace Ship_Fighters
                 if (HoldingF1 == false)
                 {
                     HoldingF1 = true;
-                    if (MediaPlayer.IsMuted)
-                    {
-                        MediaPlayer.IsMuted = false;
-                    }
+                    
+                    if(Mute = !Mute)
+                        MediaPlayer.Pause();
                     else
-                    {
-                        MediaPlayer.IsMuted = true;
-                    }
+                        MediaPlayer.Resume();
 
                 }
             }
@@ -1052,6 +1057,15 @@ namespace Ship_Fighters
                                     break;
                                 case "MLG":
                                     Mode = "Nathan";
+                                    //var muted = MediaPlayer.IsMuted;
+                                    //MediaPlayer.IsMuted = false;
+                                    MediaPlayer.Stop();
+                                    MediaPlayer.Play(Nathan);
+                                    MediaPlayer.IsRepeating = true;
+                                    if(Mute)
+                                        MediaPlayer.Pause();
+                                    //MediaPlayer.IsRepeating = true;
+                                    //MediaPlayer.IsMuted = muted;
                                     Loading.PlayerTexture = NathanLoading;
                                     RedBulletTexture = NathanRedBullet;
                                     BlueBulletTexture = NathanBlueBullet;
@@ -1060,6 +1074,15 @@ namespace Ship_Fighters
                                     break;
                                 case "Nathan":
                                     Mode = "Normal";
+                                    //var muted2 = MediaPlayer.IsMuted;
+                                    //MediaPlayer.IsMuted = false;
+                                    MediaPlayer.Stop();
+                                    MediaPlayer.Play(Background);
+                                    MediaPlayer.IsRepeating = true;
+                                    if(Mute)
+                                        MediaPlayer.Pause();
+                                   // MediaPlayer.IsRepeating = true;
+                                   //MediaPlayer.IsMuted = muted2;
                                     Loading.PlayerTexture = NormalLoading;
                                     RedBulletTexture = RedBullet;
                                     BlueBulletTexture = BlueBullet;
@@ -1076,7 +1099,9 @@ namespace Ship_Fighters
                     {
                         if (escaping == false)
                         {
+                            MediaPlayer.Stop();
                             Exit();
+                            Dispose();
                         }
                     }
                     else { escaping = false; }
